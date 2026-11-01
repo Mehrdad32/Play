@@ -67,6 +67,19 @@ describe('M32 Merge engine', () => {
     expect(move(s,'right',random).created32).toBe(0);
     expect(move(fixture([[16,16,16,16],[0,0,0,0],[0,0,0,0],[0,0,0,0]]),'left',random).created32).toBe(2);
   });
+  it('detects game over from the last possible slide and spawn', () => {
+    const s = fixture([[4,2,4,0],[4,2,4,2],[2,4,2,4],[4,2,4,2]]);
+    const result = move(s,'right',random);
+    expect(result.moved).toBe(true);
+    expect(result.state.board[0]).toEqual([2,4,2,4]);
+    expect(result.state.over).toBe(true);
+    expect(move(result.state,'left',random).moved).toBe(false);
+  });
+  it('exposes tile origins and destinations for precise animation', () => {
+    const s = fixture([[2,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]);
+    const result = move(s,'right',random);
+    expect(result.motions).toContainEqual({fromRow:0,fromCol:0,toRow:0,toCol:3,merged:false});
+  });
   it('holds state while paused', () => {
     const s = { ...fixture([[2,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]), paused: true };
     expect(move(s,'right',random).moved).toBe(false);
