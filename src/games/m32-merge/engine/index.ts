@@ -12,7 +12,8 @@ export type GameState = Snapshot & {
   past: Snapshot | null; paused: boolean; startedAt: number; lastPlayedAt: number;
 };
 export type MergeEvent = { row: number; col: number; value: number };
-export type MoveResult = { state: GameState; moved: boolean; merges: MergeEvent[]; created32: number };
+export type TileMotion = { fromRow: number; fromCol: number; toRow: number; toCol: number; merged: boolean };
+export type MoveResult = { state: GameState; moved: boolean; merges: MergeEvent[]; motions: TileMotion[]; created32: number };
 export type Random = () => number;
 
 export function emptyBoard(): Board {
@@ -59,10 +60,11 @@ export function newGame(random: Random = Math.random, now = Date.now()): GameSta
   };
 }
 export function move(state: GameState, direction: Direction, random: Random = Math.random, now = Date.now()): MoveResult {
-  const noChange = { state, moved: false, merges: [] as MergeEvent[], created32: 0 };
+  const noChange = { state, moved: false, merges: [] as MergeEvent[], motions: [] as TileMotion[], created32: 0 };
   if (state.paused || state.over || (state.won && !state.continued)) return noChange;
   const board = emptyBoard();
   const merges: MergeEvent[] = [];
+  const motions: TileMotion[] = [];
   let score = 0;
   for (let line = 0; line < 4; line++) {
     const coordinates: [number, number][] = [];
@@ -70,17 +72,25 @@ export function move(state: GameState, direction: Direction, random: Random = Ma
       const n = (direction === 'right' || direction === 'down') ? 3 - step : step;
       coordinates.push(direction === 'left' || direction === 'right' ? [line, n] : [n, line]);
     }
-    const occupied = coordinates.map(([r, c]) => state.board[r][c]).filter(Boolean);
+    const occupied = coordinates.map(([r, c]) => ({ row: r, col: c, value: state.board[r][c] })).filter(item => item.value !== 0);
     const output: number[] = [];
     for (let i = 0; i < occupied.length; i++) {
-      if (i + 1 < occupied.length && occupied[i] === occupied[i + 1]) {
-        const value = occupied[i] * 2;
+      if (i + 1 < occupied.length && occupied[i].value === occupied[i + 1].value) {
+        const value = occupied[i].value * 2;
         output.push(value);
         const [row, col] = coordinates[output.length - 1];
         merges.push({ row, col, value });
+        for (const source of [occupied[i], occupied[i + 1]]) {
+          motions.push({ fromRow: source.row, fromCol: source.col, toRow: row, toCol: col, merged: true });
+        }
         score += value;
         i++;
-      } else output.push(occupied[i]);
+      } else {
+        const source = occupied[i];
+        output.push(source.value);
+        const [row, col] = coordinates[output.length - 1];
+        motions.push({ fromRow: source.row, fromCol: source.col, toRow: row, toCol: col, merged: false });
+      }
     }
     coordinates.forEach(([r, c], i) => { board[r][c] = output[i] ?? 0; });
   }
@@ -89,7 +99,7 @@ export function move(state: GameState, direction: Direction, random: Random = Ma
   const created32 = merges.filter(item => item.value === 32).length;
   const won = state.won || highestTile(nextBoard) >= 2048;
   return {
-    moved: true, merges, created32,
+    moved: true, merges, motions, created32,
     state: {
       ...state, board: nextBoard, score: state.score + score, moves: state.moves + 1,
       won, over: !canMove(nextBoard), merge32Count: state.merge32Count + created32,

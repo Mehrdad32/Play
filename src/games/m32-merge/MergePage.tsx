@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type CSSProperties, type Touc
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, ArrowUp, CircleHelp, Copy, Medal, Pause, Play, Redo2, RotateCcw, Settings2, Share2, Sparkles, Trophy, Undo2, Volume2, VolumeX, X } from 'lucide-react';
 import type { AppProps } from '../../App';
-import { canMove, continueGame, highestTile, move, newGame, undo, type Direction, type GameState, type MergeEvent } from './engine';
+import { canMove, continueGame, highestTile, move, newGame, undo, type Direction, type GameState, type MergeEvent, type TileMotion } from './engine';
 import { getOrStartSession, loadStats, recordMove, recordNewGame, resetStats, saveSession, type Stats } from '../../lib/storage';
 
 const tileColors: Record<number, string> = {
@@ -47,6 +47,7 @@ export default function MergePage({ locale, settings, setSettings }: AppProps) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [fx, setFx] = useState<Fx | null>(null);
   const [merged, setMerged] = useState<MergeEvent[]>([]);
+  const [motions, setMotions] = useState<TileMotion[]>([]);
   const [version, setVersion] = useState(0);
   const [shareMessage, setShareMessage] = useState('');
   const fxTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -68,6 +69,7 @@ export default function MergePage({ locale, settings, setSettings }: AppProps) {
     statsRef.current = nextStats;
     setStats(nextStats);
     setMerged(result.merges);
+    setMotions(result.motions);
     setVersion(v => v + 1);
     if (settings.sound && result.merges.length) playTone();
     if (fxTimer.current) clearTimeout(fxTimer.current);
@@ -83,7 +85,7 @@ export default function MergePage({ locale, settings, setSettings }: AppProps) {
     const current=gameRef.current;
     if(!current.past)return;
     updateGame(undo(current));
-    setFx(null);setMerged([]);setVersion(v=>v+1);
+    setFx(null);setMerged([]);setMotions([]);setVersion(v=>v+1);
   },[updateGame]);
   const startNew = useCallback(() => {
     if (!window.confirm(fa?'بازی فعلی تمام شود و بازی جدید شروع شود؟':'End current game and start a new one?')) return;
@@ -91,7 +93,7 @@ export default function MergePage({ locale, settings, setSettings }: AppProps) {
     updateGame(next);
     const updated = recordNewGame(next, statsRef.current);
     statsRef.current = updated; setStats(updated);
-    setFx(null); setMerged([]); setVersion(v=>v+1);
+    setFx(null); setMerged([]); setMotions([]); setVersion(v=>v+1);
   }, [fa,updateGame]);
   const pause = () => { updateGame({ ...gameRef.current, paused: !gameRef.current.paused }); };
   const resumeWinner = () => { updateGame(continueGame(gameRef.current)); };
@@ -153,14 +155,19 @@ export default function MergePage({ locale, settings, setSettings }: AppProps) {
         <div className="relative overflow-hidden rounded-[24px] border border-white/[.09] bg-[#101915] p-2.5 shadow-[0_30px_90px_rgba(0,0,0,.35)] sm:rounded-[32px] sm:p-4"
           dir="ltr" role="application" aria-label={fa?'صفحه بازی چهار در چهار':'4 by 4 game board'}
           onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} style={{touchAction:'none',userSelect:'none',WebkitUserSelect:'none'}}>
-          <div className="grid grid-cols-4 gap-2 sm:gap-3">
+          <div className="game-board-grid grid grid-cols-4 gap-2 sm:gap-3">
             {game.board.map((row,r)=>row.map((value,c)=>{
               const mergedHere=merged.some(m=>m.row===r&&m.col===c);
               const activeFx=fx?.cells.some(m=>m.row===r&&m.col===c);
               const is32=value===32;
+              const motion = motions.find(m => m.toRow===r && m.toCol===c && (m.fromRow!==r || m.fromCol!==c));
+              const motionStyle = motion ? {
+                '--from-x': `calc(${motion.fromCol-c} * (100% + var(--cell-gap)))`,
+                '--from-y': `calc(${motion.fromRow-r} * (100% + var(--cell-gap)))`
+              } as CSSProperties : undefined;
               return <div key={r+'-'+c} className="relative aspect-square min-w-0 rounded-xl bg-white/[.045] sm:rounded-2xl">
-                {value>0 && <div key={version+'-'+r+'-'+c} aria-label={String(value)}
-                  className={`tile absolute inset-0 grid place-items-center rounded-xl font-mono font-extrabold tracking-tighter sm:rounded-2xl ${is32?'tile-m32':tileColors[value]??'bg-[#63502f] text-white'} ${mergedHere?'tile-merged':''} ${value>=1024?'text-xl sm:text-3xl':value>=128?'text-2xl sm:text-4xl':'text-3xl sm:text-5xl'}`}>
+                {value>0 && <div key={version+'-'+r+'-'+c} aria-label={String(value)} style={motionStyle}
+                  className={`tile ${motion?'tile-moving':''} absolute inset-0 grid place-items-center rounded-xl font-mono font-extrabold tracking-tighter sm:rounded-2xl ${is32?'tile-m32':tileColors[value]??'bg-[#63502f] text-white'} ${mergedHere?'tile-merged':''} ${value>=1024?'text-xl sm:text-3xl':value>=128?'text-2xl sm:text-4xl':'text-3xl sm:text-5xl'}`}>
                   {value}{is32 && <span className="absolute bottom-1 text-[6px] tracking-[.17em] text-emerald-100/70 sm:bottom-2 sm:text-[8px]">M32</span>}
                 </div>}
                 {activeFx && <div key={fx!.id+'-'+r+'-'+c} className="m32-burst"><span>✦ M32</span>{Array.from({length:8},(_,i)=><i key={i} className="particle" style={{'--angle':`${i*45}deg`} as CSSProperties}/>)}</div>}

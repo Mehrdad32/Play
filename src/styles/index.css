@@ -27,3 +27,10 @@ button:disabled { cursor: not-allowed; }
   *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
 }
 .motion-off *, .motion-off *::before,.motion-off *::after { animation:none !important; transition:none !important; }
+
+.game-board-grid { --cell-gap: 8px; }
+@media (min-width:640px) { .game-board-grid { --cell-gap: 12px; } }
+.tile.tile-moving { animation:tile-shift .18s cubic-bezier(.19,.7,.24,1) both; }
+.tile.tile-moving.tile-merged { animation:tile-shift-pop .25s cubic-bezier(.19,.7,.24,1) both; }
+@keyframes tile-shift { from {transform:translate(var(--from-x),var(--from-y));} to {transform:translate(0,0);} }
+@keyframes tile-shift-pop { 0% {transform:translate(var(--from-x),var(--from-y)) scale(1)} 65% {transform:translate(0,0) scale(1.1)} 100% {transform:translate(0,0) scale(1)} }
