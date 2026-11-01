@@ -1,0 +1,144 @@
+# M32 Playground 🎮
+
+**One more game. One more high score.**
+
+[![CI](https://github.com/Mehrdad32/Play/actions/workflows/ci.yml/badge.svg)](https://github.com/Mehrdad32/Play/actions/workflows/ci.yml)
+[![MIT](https://img.shields.io/badge/license-MIT-34D399.svg)](LICENSE)
+[![Website](https://img.shields.io/badge/Play-play.mehrdad32.ir-34D399.svg)](https://play.mehrdad32.ir/)
+
+**M32 Playground** is an open-source, mobile-first collection of fast browser games created by **Mehrdad32**. No accounts, backend, analytics, advertisements, or tracking. Your progress lives on your device.
+
+**[Launch Playground](https://play.mehrdad32.ir/)** · **[Mehrdad32 main website](https://mehrdad32.ir/)** · **[Source](https://github.com/Mehrdad32/Play)**
+
+## Interface preview
+
+| Playground | M32 Merge |
+| --- | --- |
+| Emerald/dark game catalog · bilingual Persian/English · responsive | 4 × 4 board · score · best score · special **M32** tile · stats |
+
+```text
+    M32 MERGE                 SCORE  032
+    ┌─────┬─────┬─────┬─────┐
+    │  2  │  4  │  8  │ 16  │
+    ├─────┼─────┼─────┼─────┤
+    │     │ ✦32 │ 64  │     │   ← special M32 tile
+    ├─────┼─────┼─────┼─────┤
+    │     │ 128 │ 256 │     │
+    ├─────┼─────┼─────┼─────┤
+    │     │     │ 512 │1024 │
+    └─────┴─────┴─────┴─────┘
+```
+
+See the **[live visual preview](https://play.mehrdad32.ir/)**. This is an illustrative board, not a fabricated screenshot.
+
+## Game catalog
+
+| Game | Status |
+| --- | --- |
+| **M32 Merge** — custom 2048 with a special 16+16→32 celebration | Playable |
+| Reaction 32 | Planned |
+| HEX Hunter | Planned |
+| Memory Bits | Planned |
+| Terminal Escape | Planned |
+
+Only M32 Merge is implemented. Upcoming games are intentionally not linked to empty pages.
+
+## M32 Merge highlights
+
+- Standard 4×4 sliding and single-merge rules; 2/4 tile spawning with a 90/10 split
+- Win at 2048, continue beyond it, game-over detection, pause/resume, restart confirmation, one-step undo
+- **M32 signature:** emerald 32 tile, glow/particle effect **only upon a 16+16 merge**, per-game 32 merge counter, first-M32 achievement
+- Arrow keys, touch swipe, optional audio (disabled by default), configurable animation and `prefers-reduced-motion`
+- Automatic resume, local best score, wins, games played, highest tile, last-played timestamp, cumulative M32 count
+- Persian RTL and English LTR UI; consistent left-to-right board in both languages; accessibility focus rings
+- Share result via Web Share API with clipboard fallback
+- Offline-ready PWA: precached assets and SPA navigation after the service worker installs
+
+## Run locally
+
+Requires **Node.js 22.12+**.
+
+```bash
+git clone https://github.com/Mehrdad32/Play.git
+cd Play
+npm install
+npm run dev
+```
+
+Open the local URL printed by Vite. Run the quality checks:
+
+```bash
+npm run lint
+npm run test
+npm run build
+npm run preview
+```
+
+Routes: `/`, `/games/m32-merge`, `/about`. The UI language toggle is persisted locally and keeps the current route.
+
+## Architecture
+
+```text
+src/
+  App.tsx                       # routing, landing, about, localization
+  games/
+    catalog.ts                  # extensible game registry
+    m32-merge/
+      engine/index.ts           # pure deterministic 2048 state machine
+      tests/engine.test.ts      # movement, scoring, win, undo, achievement
+      MergePage.tsx             # game UI, effects, keyboard/swipe
+  lib/storage/index.ts         # namespaced local persistence and validation
+  styles/index.css             # dark emerald design system and animation
+public/
+  _redirects                   # Cloudflare Pages SPA fallback
+  _headers                     # response security headers
+  favicon.svg                  # temporary marked M32 icon (replaceable)
+```
+
+The **engine is UI-independent** and accepts an injected RNG for deterministic tests. All gameplay derives from the engine's returned state and merge events. Display logic never decides whether a merge is legal.
+
+### Add another game
+
+1. Add `src/games/<slug>/` with a pure engine, UI component and tests.
+2. Add one catalog entry in `src/games/catalog.ts`. Switch to `status: 'live'` and give it a URL when playable.
+3. Register that route in `src/App.tsx`.
+4. Namespace its storage under `m32.playground.v1.<slug>.*` using the shared local storage conventions.
+5. Run lint, tests and build before shipping.
+
+## Storage and privacy
+
+Records are stored **only in this browser on this device** (not cloud-synchronized). Keys:
+
+- `m32.playground.v1.merge.bestScore`
+- `m32.playground.v1.merge.stats`
+- `m32.playground.v1.merge.session`
+- `m32.playground.v1.settings`
+
+Invalid/old JSON is ignored without crashing. Reset Stats is confirmed and does not delete the active game. Clearing the site's browser data erases all local records. Lifetime statistics count merges when they occur; undo reverts the active game counter but does not retract a lifetime accomplishment. The namespaced storage adapter can later be replaced with cloud sync without rewriting the game engine.
+
+## Deploy to Cloudflare Pages
+
+Create a **Pages → Connect to Git** project:
+
+| Setting | Value |
+| --- | --- |
+| GitHub repository | `Mehrdad32/Play` |
+| Production branch | `main` |
+| Project name | `m32-playground` |
+| Framework preset | `Vite` |
+| Build command | `npm run build` |
+| Output directory | `dist` |
+| Node.js | `22` (set `NODE_VERSION=22` if necessary) |
+| Custom domain | `play.mehrdad32.ir` |
+
+Point the custom domain to the Pages deployment using Cloudflare Pages' **Custom domains** panel, then wait for the SSL certificate to become active. The included `public/_redirects` provides history-mode SPA route fallback for direct links and browser refresh. `vite-plugin-pwa` precaches the built app for offline visits **after initial online load and successful service-worker installation**. No secrets, paid services, backend, or API keys are required.
+
+GitHub Actions runs lint, unit tests and the production build on `main`, feature branches and PRs.
+
+## Branding and license
+
+Designed to visually complement **[Mehrdad32.ir](https://mehrdad32.ir/)** (near-black background, emerald/mint accents, Vazirmatn Persian UI). The `TEMP`-labeled M32 icon is a **temporary brand placeholder**; replace with the approved binary logo once its reusable asset is available.
+
+Created by **Mehrdad32** · Copyright © 2026 Mehrdad32.
+
+Licensed under the [MIT License](LICENSE). Original creator credit and the copyright notice must be retained in copies and substantial portions.

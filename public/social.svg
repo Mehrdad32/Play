@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<rect width="1200" height="630" fill="#07090d"/>
+<circle cx="1000" cy="40" r="400" fill="#123e32"/>
+<circle cx="70" cy="620" r="300" fill="#0d2720"/>
+<rect x="90" y="130" width="150" height="150" rx="34" fill="#10281f" stroke="#34d399" stroke-width="4"/>
+<text x="114" y="225" font-size="55" font-family="sans-serif" font-weight="900" fill="#34d399">M32</text>
+<text x="90" y="380" font-size="90" font-family="sans-serif" font-weight="900" fill="#f2fff8">M32 Playground</text>
+<text x="90" y="445" font-size="35" font-family="sans-serif" fill="#b7c9c2">ONE MORE GAME. ONE MORE HIGH SCORE.</text>
+<text x="90" y="530" font-size="28" font-family="sans-serif" fill="#34d399">play.mehrdad32.ir</text>
+</svg>
