@@ -13,7 +13,9 @@ export type State = {
 export const MODES: Mode[] = ['classic', 'rush', 'precision', 'duel'];
 export const TARGET = { classic: 5, precision: 10, duel: 5 } as const;
 export const RUSH_MS = 32000;
-export const waitMs = (random: number, mode: Mode = 'classic') => mode === 'rush'\n  ? 180 + Math.floor(Math.max(0, Math.min(0.999999, random)) * 420)\n  : 1200 + Math.floor(Math.max(0, Math.min(0.999999, random)) * 2300);
+export const waitMs = (random: number, mode: Mode = 'classic') => mode === 'rush'
+  ? 180 + Math.floor(Math.max(0, Math.min(0.999999, random)) * 420)
+  : 1200 + Math.floor(Math.max(0, Math.min(0.999999, random)) * 2300);
 export function create(mode: Mode): State {
   return { mode, phase: 'ready', player: 0, attempts: [0,0], hits: [[],[]],
     falseStarts: [0,0], trials: [], score: 0, streak: 0, bestStreak: 0,
