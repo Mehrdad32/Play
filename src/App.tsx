@@ -20,16 +20,22 @@ function Brand({ compact = false }: { compact?: boolean }) {
 }
 function Header({ locale, settings, setSettings }: AppProps) {
   const fa = locale === 'fa';
-  return <header className="sticky top-0 z-40 border-b border-white/[.07] bg-[#07090d]/90 backdrop-blur-2xl">
-    <div className="mx-auto flex min-h-[72px] max-w-6xl items-center justify-between gap-3 px-4 sm:px-8">
-      <Link to="/" aria-label="M32 Playground home" className="shrink-0"><Brand /></Link>
-      <nav aria-label={fa ? 'منوی اصلی' : 'Main navigation'} className="flex items-center gap-1 sm:gap-4">
-        <Link to="/" className="rounded-lg px-2 py-2 text-xs text-zinc-400 hover:text-emerald-300 sm:px-3 sm:text-sm"><House className="inline h-4 w-4 sm:me-1" /><span className="hidden sm:inline">{fa?'خانه':'Home'}</span></Link>
-        <Link to="/about" className="rounded-lg px-2 py-2 text-xs text-zinc-400 hover:text-emerald-300 sm:px-3 sm:text-sm"><Info className="inline h-4 w-4 sm:me-1"/><span className="hidden sm:inline">{fa?'درباره':'About'}</span></Link>
-        <a href={site} className="rounded-lg px-2 py-2 text-xs text-zinc-300 hover:text-emerald-300 sm:px-3 sm:text-sm" target="_blank" rel="noopener noreferrer">{fa?'Mehrdad32.ir':'Main site'} <ArrowUpRight className="inline h-3.5 w-3.5" /></a>
-        <button type="button" className="rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-xs text-zinc-200 transition hover:border-emerald-300/40"
+  return <header className="sticky top-0 z-40 w-full min-w-0 border-b border-white/[.07] bg-[#07090d]/90 backdrop-blur-2xl">
+    <div className="mx-auto flex min-h-[64px] w-full max-w-6xl items-center justify-between gap-2 px-3 sm:min-h-[72px] sm:gap-3 sm:px-8">
+      {/* Mobile uses the compact brand: full logo + nav used to exceed the viewport. */}
+      <Link to="/" aria-label="M32 Playground home" className="inline-flex min-w-0 shrink-0 items-center">
+        <span className="sm:hidden"><Brand compact /></span>
+        <span className="hidden sm:inline-flex"><Brand /></span>
+      </Link>
+      <nav aria-label={fa ? 'منوی اصلی' : 'Main navigation'} className="flex min-w-0 shrink-0 items-center gap-0 sm:gap-2 lg:gap-4">
+        <Link to="/" aria-label={fa?'خانه':'Home'} className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-xs text-zinc-400 hover:text-emerald-300 sm:h-auto sm:w-auto sm:px-2 sm:py-2 sm:text-sm"><House className="h-4 w-4 sm:me-1" /><span className="hidden sm:inline">{fa?'خانه':'Home'}</span></Link>
+        <Link to="/about" aria-label={fa?'درباره':'About'} className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-xs text-zinc-400 hover:text-emerald-300 sm:h-auto sm:w-auto sm:px-2 sm:py-2 sm:text-sm"><Info className="h-4 w-4 sm:me-1"/><span className="hidden sm:inline">{fa?'درباره':'About'}</span></Link>
+        <a href={site} aria-label={fa?'وب‌سایت اصلی Mehrdad32.ir':'Mehrdad32.ir main website'} className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-zinc-300 hover:text-emerald-300 sm:h-auto sm:w-auto sm:gap-1 sm:px-2 sm:py-2 sm:text-sm" target="_blank" rel="noopener noreferrer">
+          <span className="hidden sm:inline">{fa?'Mehrdad32.ir':'Main site'}</span><ArrowUpRight className="h-[18px] w-[18px] sm:h-3.5 sm:w-3.5" />
+        </a>
+        <button type="button" className="inline-flex h-10 min-w-[46px] shrink-0 items-center justify-center gap-1 rounded-xl border border-white/10 bg-white/[.04] px-2 text-xs text-zinc-200 transition hover:border-emerald-300/40 sm:h-auto sm:px-3 sm:py-2"
           aria-label={fa?'Switch to English':'تغییر زبان به فارسی'} onClick={() => setSettings({ ...settings, locale: fa ? 'en' : 'fa' })}>
-          <Globe2 className="me-1 inline h-4 w-4"/>{fa?'EN':'فا'}
+          <Globe2 className="h-4 w-4"/>{fa?'EN':'فا'}
         </button>
       </nav>
     </div>
