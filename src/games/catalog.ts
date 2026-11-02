@@ -19,7 +19,8 @@ export const games: GameInfo[] = [
   { id: 'memory-bits', name: 'Memory Bits', titleFa: 'حافظه‌ات را امتحان کن', titleEn: 'Train your memory',
     descFa: 'الگوها را ببین و به خاطر بسپار.', descEn: 'Watch the pattern. Remember the sequence.',
     icon: BrainCircuit, status: 'soon', accent: 'violet', number: '04' },
-  { id: 'terminal-escape', name: 'Terminal Escape', titleFa: 'راه خروج را پیدا کن', titleEn: 'Find the exit',
-    descFa: 'یک ماجراجویی کوچک در ترمینال.', descEn: 'A bite-size terminal adventure.',
-    icon: Terminal, status: 'soon', accent: 'rose', number: '05' }
+  { id: 'terminal-escape', name: 'Terminal Escape', titleFa: 'از آزمایشگاه M32 فرار کن!', titleEn: 'Escape the locked M32 lab',
+    descFa: 'پنج مرحله معمایی، دستورهای ترمینال، سرنخ‌های مخفی و یک راه خروج. آماده‌ای؟',
+    descEn: 'Five puzzle layers, secret clues and one simulated terminal. Can you escape?',
+    icon: Terminal, status: 'live', url: '/games/terminal-escape', accent: 'emerald', number: '05' }
 ];

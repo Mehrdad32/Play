@@ -39,9 +39,9 @@ See the **[live visual preview](https://play.mehrdad32.ir/)**. This is an illust
 | Reaction 32 | Planned |
 | HEX Hunter | Planned |
 | Memory Bits | Planned |
-| Terminal Escape | Planned |
+| **Terminal Escape** — five-layer simulated terminal adventure | **Playable** |
 
-Only M32 Merge is implemented. Upcoming games are intentionally not linked to empty pages.
+M32 Merge and Terminal Escape are fully playable. The other cards are non-clickable until implemented.
 
 ## M32 Merge highlights
 
@@ -53,6 +53,27 @@ Only M32 Merge is implemented. Upcoming games are intentionally not linked to em
 - Persian RTL and English LTR UI; consistent left-to-right board in both languages; accessibility focus rings
 - Share result via Web Share API with clipboard fallback
 - Offline-ready PWA: precached assets and SPA navigation after the service worker installs
+
+## Terminal Escape — the second playable game
+
+**Route:** `/games/terminal-escape`
+
+A complete, bilingual, mobile-friendly interactive fiction/puzzle game. Escape the fictional M32 lab through **five progressively unlocked security layers**: Access Gate, File System, Network, Control Core and Final Exit.
+
+- A realistic-looking terminal window with entirely **simulated commands** (no shell, process, network or external APIs).
+- Discover clues using `ls`, `cat`, `cd`, `scan`, `ping`, `status`, and game-specific puzzle commands.
+- A pure, deterministic puzzle engine independent of React; stages cannot be skipped by entering the final commands without discovering their prerequisites.
+- Context-aware quick-command chips for touch devices, a text input, command history via ↑ and ↓, multilingual hints and help.
+- Scoring penalizes wasted commands, incorrect guesses and hints, rewards the secret **M32** Easter egg.
+- Auto-saves current run and progress to localStorage. Tracks attempts, successful escapes, best score, fastest escape and fewest commands.
+- End-game results, replay and Web Share API / clipboard fallback.
+- Respects the application's dark emerald style and reduced-motion preference.
+
+Terminal-specific local keys are `m32.playground.v1.terminalEscape.session` and `m32.playground.v1.terminalEscape.stats`. The game uses no credentials, real commands or tracking.
+
+### How to play
+
+Open the game from the homepage. Try `help` or `ls`, read the files and follow the clues. On mobile, tap the quick-command suggestions. Use `hint` if stuck, or `map` to inspect your progress. To finish, unlock all five layers. The challenge can be replayed and the game resumes automatically after a refresh.
 
 ## Run locally
 
@@ -74,7 +95,7 @@ npm run build
 npm run preview
 ```
 
-Routes: `/`, `/games/m32-merge`, `/about`. The UI language toggle is persisted locally and keeps the current route.
+Routes: `/`, `/games/m32-merge`, `/games/terminal-escape`, `/about`. The UI language toggle is persisted locally and keeps the current route.
 
 ## Architecture
 
@@ -83,6 +104,12 @@ src/
   App.tsx                       # routing, landing, about, localization
   games/
     catalog.ts                  # extensible game registry
+    terminal-escape/
+      engine/index.ts           # pure stage transition / text adventure engine
+      engine/engine.test.ts     # puzzle progression, scoring, safety
+      storage.ts                # isolated resumable game persistence
+      storage.test.ts           # save/restore, invalid data, stats
+      TerminalEscapePage.tsx    # console UI and mobile command suggestions
     m32-merge/
       engine/index.ts           # pure deterministic 2048 state machine
       tests/engine.test.ts      # movement, scoring, win, undo, achievement
@@ -113,6 +140,8 @@ Records are stored **only in this browser on this device** (not cloud-synchroniz
 - `m32.playground.v1.merge.stats`
 - `m32.playground.v1.merge.session`
 - `m32.playground.v1.settings`
+- `m32.playground.v1.terminalEscape.session`
+- `m32.playground.v1.terminalEscape.stats`
 
 Invalid/old JSON is ignored without crashing. Reset Stats is confirmed and does not delete the active game. Clearing the site's browser data erases all local records. Lifetime statistics count merges when they occur; undo reverts the active game counter but does not retract a lifetime accomplishment. The namespaced storage adapter can later be replaced with cloud sync without rewriting the game engine.
 
