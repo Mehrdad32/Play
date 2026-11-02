@@ -6,6 +6,7 @@ import MergePage from './games/m32-merge/MergePage';
 import TerminalEscapePage from './games/terminal-escape/TerminalEscapePage';
 import MemoryBitsPage from './games/memory-bits/MemoryBitsPage';
 import HexHunterPage from './games/hex-hunter/HexHunterPage';
+import Reaction32Page from './games/reaction-32/Reaction32Page';
 import { loadSettings, saveSettings, type Settings } from './lib/storage';
 export type AppLocale = 'fa' | 'en';
 export type AppProps = { locale: AppLocale; settings: Settings; setSettings: (settings: Settings) => void };
@@ -14,7 +15,7 @@ const repo = 'https://github.com/Mehrdad32/Play';
 function Brand({ compact = false }: { compact?: boolean }) {
   return <span className="inline-flex items-center gap-3" dir="ltr">
     <span className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-300/40 bg-emerald-400/10 font-mono text-sm font-black tracking-tighter text-emerald-300 shadow-[0_0_22px_rgba(52,211,153,.13)]">
-      M32<span className="absolute -bottom-2 rounded border border-emerald-400/30 bg-[#07090d] px-1 font-sans text-[5px] tracking-wide text-emerald-200/70">TEMP</span>
+      M32
     </span>
     {!compact && <span className="font-mono text-sm font-bold tracking-tight text-zinc-100 sm:text-base">M32 <span className="text-emerald-300">Playground</span></span>}
   </span>;
@@ -77,9 +78,9 @@ function Home({ locale }: { locale: AppLocale }) {
   return <><section className="relative overflow-hidden border-b border-white/[.06]">
     <div className="grid-bg absolute inset-0 opacity-60"/><div className="pointer-events-none absolute left-1/2 top-0 h-96 w-[600px] -translate-x-1/2 rounded-full bg-emerald-400/[.07] blur-[130px]"/>
     <div className="relative mx-auto grid max-w-6xl items-center gap-9 px-5 pb-20 pt-20 sm:px-8 sm:pt-28 lg:grid-cols-[1.13fr_.87fr] lg:gap-16 lg:py-32">
-      <div><div dir="ltr" className="mb-7 inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/[.06] px-4 py-2 font-mono text-[10px] tracking-[.2em] text-emerald-300"><span className="h-1.5 w-1.5 rounded-full bg-emerald-300"/> MINI ARCADE / NO SIGNUP / JUST PLAY</div>
+      <div><div dir="ltr" className="mb-7 inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/[.06] px-4 py-2 font-mono text-[10px] tracking-[.2em] text-emerald-300"><span className="h-1.5 w-1.5 rounded-full bg-emerald-300"/> 5 GAMES / NO SIGNUP / JUST PLAY</div>
         <h1 className="max-w-xl text-5xl font-black leading-[1.35] tracking-tight text-white sm:text-6xl lg:text-7xl">{fa?<>یه بازی کوتاه،<br/><span className="text-emerald-300">یه رکورد تازه!</span></>:<>One more game.<br/><span className="text-emerald-300">One more high score.</span></>}</h1>
-        <p className="mt-7 max-w-xl text-base leading-9 text-zinc-400">{fa?'بازی‌های سبک و سرگرم‌کننده، بدون نصب، بدون ثبت‌نام؛ فقط بازی کن و رکورد بزن!':'Lightweight browser games. No installation, no account. Just play and beat your best score.'}</p>
+        <p className="mt-7 max-w-xl text-base leading-9 text-zinc-400">{fa?'پنج بازی متفاوت، سبک و سرگرم‌کننده؛ بدون نصب، بدون ثبت‌نام. بازی کن و رکورد بزن!':'Five lightweight browser games. No installation, no account. Just play and beat your best score.'}</p>
         <div className="mt-9 flex flex-wrap items-center gap-3">
           <Link to="/games/m32-merge" className="glow-button inline-flex items-center gap-2 rounded-full bg-emerald-300 px-7 py-3.5 text-sm font-black text-[#06170e] hover:bg-emerald-200"><Gamepad2 size={20}/>{fa?'بریم بازی!':'Start playing'}</Link>
           <a href={repo} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-white/10 px-6 py-3.5 text-sm text-zinc-300 hover:border-emerald-300/30"><Github size={18}/>{fa?'مشاهده سورس':'View source'}</a>
@@ -95,7 +96,7 @@ function Home({ locale }: { locale: AppLocale }) {
       </div>
     </div>
   </section>
-  <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8 sm:py-28"><div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><div className="font-mono text-[11px] tracking-[.22em] text-emerald-300" dir="ltr">./PICK_YOUR_GAME</div><h2 className="mt-4 text-3xl font-black text-zinc-100 sm:text-4xl">{fa?'آماده‌ای رکورد بزنی؟':'Choose your challenge.'}</h2></div><span className="text-sm text-zinc-500">{fa?'بازی‌های بیشتر در راه‌اند...':'More games are on their way...'}</span></div>
+  <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8 sm:py-28"><div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><div className="font-mono text-[11px] tracking-[.22em] text-emerald-300" dir="ltr">./PICK_YOUR_GAME</div><h2 className="mt-4 text-3xl font-black text-zinc-100 sm:text-4xl">{fa?'آماده‌ای رکورد بزنی؟':'Choose your challenge.'}</h2></div><span className="text-sm text-zinc-500">{fa?'پنج بازی، پنج چالش متفاوت؛ همگی آماده بازی!':'All five arcade games are live!'}</span></div>
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">{games.map(game=><GameCard key={game.id} game={game} locale={locale}/>)}</div>
   </section></>;
 }
@@ -121,6 +122,7 @@ export default function App() {
       <Route path="/games/terminal-escape" element={<TerminalEscapePage locale={settings.locale} settings={settings} setSettings={setSettings}/>}/>
       <Route path="/games/memory-bits" element={<MemoryBitsPage locale={settings.locale} settings={settings} setSettings={setSettings}/>}/>
       <Route path="/games/hex-hunter" element={<HexHunterPage locale={settings.locale} settings={settings} setSettings={setSettings}/>}/>
+      <Route path="/games/reaction-32" element={<Reaction32Page locale={settings.locale} settings={settings} setSettings={setSettings}/>}/>
       <Route path="/about" element={<About locale={settings.locale}/>}/>
       <Route path="*" element={<div className="mx-auto max-w-3xl px-5 py-32 text-center"><h1 className="text-5xl font-black">404</h1><p className="my-8 text-zinc-400">{settings.locale==='fa'?'این صفحه پیدا نشد.':'Page not found.'}</p><Link to="/" className="text-emerald-300">{settings.locale==='fa'?'بازگشت به خانه':'Back home'}</Link></div>}/>
     </Routes></main>
