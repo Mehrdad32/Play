@@ -36,12 +36,12 @@ See the **[live visual preview](https://play.mehrdad32.ir/)**. This is an illust
 | Game | Status |
 | --- | --- |
 | **M32 Merge** — custom 2048 with a special 16+16→32 celebration | Playable |
-| Reaction 32 | Planned |
+| **Reaction 32** — reflex timing, 32 Rush, Precision and Duel | **Playable** |
 | **HEX Hunter** — color-decoding, odd-one-out, RGB mixing and daily | **Playable** |
 | **Memory Bits** — four-mode 4×4 memory challenge | **Playable** |
 | **Terminal Escape** — five-layer simulated terminal adventure | **Playable** |
 
-M32 Merge, HEX Hunter, Memory Bits and Terminal Escape are playable. Only Reaction 32 is planned and intentionally non-clickable.
+**All five games are implemented and playable.** The original five-game catalog is complete.
 
 ## M32 Merge highlights
 
@@ -112,6 +112,25 @@ Bilingual, mobile-first arcade game with four distinct color challenges:
 
 Three lives per run; valid answers update the streak and score. Local records are isolated per mode, and the 32nd round unlocks the persistent M32 achievement. Results can be shared via the Web Share API or clipboard fallback. Sessions and stats are stored only in localStorage under `m32.playground.v1.hexHunter.*`, with validation on restore. Responsive interactions remain within the viewport without horizontal page scrolling. The engine is pure and deterministically testable without a DOM.
 
+## Reaction 32 — the fifth and final arcade game
+
+**Route:** `/games/reaction-32`
+
+Four playable reflex modes, designed mobile-first:
+
+- **Classic:** five unpredictable signals; median reaction time, fastest reaction and personal best.
+- **32 Rush:** a real 32-second monotonic-clock run with rapid random intervals, unlimited trials, speed/streak scoring and early-tap penalties. Earn the M32 badge by hitting 32 valid signals in the time limit.
+- **Precision:** ten attempts and purple decoy signals. The only correct response to a decoy is **not** to touch it; resisted decoys do not consume attempts. Tapping purple or tapping before green counts as a false start.
+- **Duel:** two players alternate on one device, five attempts each. Winner is determined by the lower median reaction time, then fewer false starts in the event of a tie.
+
+Signals are randomized and input-gated using a pure engine. The React runner timestamps input with `performance.now()`, including mobile pointer-down, while the Rush deadline is also monotonic. Results are displayed in **milliseconds**. Hidden-tab interruptions cancel the current cue or end a timed Rush to prevent skewed measurements. Device input latency, display refresh rate, and browser timing limits can affect the absolute measurements.
+
+Local records are stored under `m32.playground.v1.reaction32.stats` only (no realtime session restore since stale timers are invalid after refresh). Scoring and stats are tested independently of the UI; there is no backend, tracking, ranking service or account requirement. Persian RTL, English LTR, touch and keyboard input, user-controlled sound, share result and the accessible visible GO/STOP states are supported.
+
+### Completed arcade
+
+**Five games, five distinct mechanics:** M32 Merge, Reaction 32, HEX Hunter, Memory Bits and Terminal Escape. Each has an independent engine and namespaced storage. All five game cards on the homepage link to real playable routes. The platform remains open-source (MIT) and deploys through GitHub-connected Cloudflare Pages.
+
 ## Run locally
 
 Requires **Node.js 22.12+**.
@@ -132,7 +151,7 @@ npm run build
 npm run preview
 ```
 
-Routes: `/`, `/games/m32-merge`, `/games/terminal-escape`, `/games/memory-bits`, `/games/hex-hunter`, `/about`. The UI language toggle is persisted locally and keeps the current route.
+Routes: `/`, `/games/m32-merge`, `/games/reaction-32`, `/games/terminal-escape`, `/games/memory-bits`, `/games/hex-hunter`, `/about`. The UI language toggle is persisted locally and keeps the current route.
 
 ## Architecture
 
@@ -141,6 +160,12 @@ src/
   App.tsx                       # routing, landing, about, localization
   games/
     catalog.ts                  # extensible game registry
+    reaction-32/
+      engine/index.ts           # pure time-aware reaction rules
+      engine/engine.test.ts     # mode, scoring, turn and fake-out tests
+      storage.ts                # separate local personal bests
+      storage.test.ts           # record and corruption tests
+      Reaction32Page.tsx        # monotonic-clock UI, cues and tap control
     memory-bits/
       engine/index.ts           # pure seeded 4-mode memory rules
       engine/engine.test.ts     # deterministic patterns, scoring, modes
