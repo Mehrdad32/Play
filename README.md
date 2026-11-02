@@ -38,10 +38,10 @@ See the **[live visual preview](https://play.mehrdad32.ir/)**. This is an illust
 | **M32 Merge** — custom 2048 with a special 16+16→32 celebration | Playable |
 | Reaction 32 | Planned |
 | HEX Hunter | Planned |
-| Memory Bits | Planned |
+| **Memory Bits** — four-mode 4×4 memory challenge | **Playable** |
 | **Terminal Escape** — five-layer simulated terminal adventure | **Playable** |
 
-M32 Merge and Terminal Escape are fully playable. The other cards are non-clickable until implemented.
+M32 Merge, Memory Bits and Terminal Escape are playable. Reaction 32 and HEX Hunter remain intentionally non-clickable until implemented.
 
 ## M32 Merge highlights
 
@@ -75,6 +75,30 @@ Terminal-specific local keys are `m32.playground.v1.terminalEscape.session` and 
 
 Open the game from the homepage. Try `help` or `ls`, read the files and follow the clues. On mobile, tap the quick-command suggestions. Use `hint` if stuck, or `map` to inspect your progress. To finish, unlock all five layers. The challenge can be replayed and the game resumes automatically after a refresh.
 
+## Memory Bits — Glitch Protocol
+
+**Route:** `/games/memory-bits`
+
+A complete and mobile-first 4×4 pattern memory game featuring four genuinely distinct modes:
+
+- **Classic:** watch a growing sequence of glowing cells and repeat it in order.
+- **Reverse:** memorize the same display, then enter the steps in reverse.
+- **Glitch:** ignore short purple fake flashes and replay only the green signal sequence.
+- **Daily:** eight seeded rounds shared by everyone on the same **UTC day** with no server or API. Daily patterns reset at **00:00 UTC**.
+
+Each round extends the real pattern by one tile. The first round begins with two steps; finishing round 32 in the endless modes unlocks a persistent **M32 achievement**. Score increases with round progression and a successful streak; wrong answers end the run.
+
+The pure `src/games/memory-bits/engine` contains deterministic seeded pattern generation, cue generation, stage transitions, score calculation, and a strict input phase. Playback and touch animations are managed in the UI only. It can be unit tested without a browser.
+
+### Controls, storage and accessibility
+
+- Tap the 16 large cells or use keyboard rows `1234` / `QWER` / `ASDF` / `ZXCV`.
+- Watch the sequence before input; buttons disable during playback. Interruption/reload during playback safely returns to `ready` rather than silently skipping the signal.
+- Sound is optional/off by default. Flash transitions respect `prefers-reduced-motion` and the global animation setting.
+- Selected mode's session resumes after refresh. Stats, best score and best combo are tracked separately by mode. Browser Local Storage retains the achievement, daily score by UTC date, and lifetime totals.
+- No online leaderboard, external services, tracking, credentials or registration; sharing uses Web Share API or clipboard fallback.
+- Versioned and validated storage keys: `m32.playground.v1.memoryBits.session.<mode>`, `m32.playground.v1.memoryBits.stats`.
+
 ## Run locally
 
 Requires **Node.js 22.12+**.
@@ -95,7 +119,7 @@ npm run build
 npm run preview
 ```
 
-Routes: `/`, `/games/m32-merge`, `/games/terminal-escape`, `/about`. The UI language toggle is persisted locally and keeps the current route.
+Routes: `/`, `/games/m32-merge`, `/games/terminal-escape`, `/games/memory-bits`, `/about`. The UI language toggle is persisted locally and keeps the current route.
 
 ## Architecture
 
@@ -104,6 +128,12 @@ src/
   App.tsx                       # routing, landing, about, localization
   games/
     catalog.ts                  # extensible game registry
+    memory-bits/
+      engine/index.ts           # pure seeded 4-mode memory rules
+      engine/engine.test.ts     # deterministic patterns, scoring, modes
+      storage.ts                # isolated resumable game storage
+      storage.test.ts           # recovery, daily records, persistence
+      MemoryBitsPage.tsx        # flash playback, touch/keyboard, score UI
     terminal-escape/
       engine/index.ts           # pure stage transition / text adventure engine
       engine/engine.test.ts     # puzzle progression, scoring, safety
@@ -142,6 +172,8 @@ Records are stored **only in this browser on this device** (not cloud-synchroniz
 - `m32.playground.v1.settings`
 - `m32.playground.v1.terminalEscape.session`
 - `m32.playground.v1.terminalEscape.stats`
+- `m32.playground.v1.memoryBits.session.<mode>`
+- `m32.playground.v1.memoryBits.stats`
 
 Invalid/old JSON is ignored without crashing. Reset Stats is confirmed and does not delete the active game. Clearing the site's browser data erases all local records. Lifetime statistics count merges when they occur; undo reverts the active game counter but does not retract a lifetime accomplishment. The namespaced storage adapter can later be replaced with cloud sync without rewriting the game engine.
 
