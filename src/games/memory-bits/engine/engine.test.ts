@@ -73,12 +73,12 @@ describe('Memory Bits engine', () => {
     expect(resume(begin(initial())).phase).toBe('ready');
   });
   it('records a unique M32 achievement on finishing round 32',()=>{
-    const s={...initial(),round:32,sequence:[1,2],phase:'input' as const,inputIndex:0};
+    const s:State={...initial(),round:32,sequence:[1,2],phase:'input',inputIndex:0};
     const done=expected(s).reduce((v,c)=>guess(v,c).state,s);
     expect(done.unlocked32).toBe(true);expect(done.phase).toBe('between');
   });
   it('completes daily at exactly round eight',()=>{
-    const s={...initial('daily'),round:DAILY_ROUNDS,sequence:[2,8],phase:'input' as const};
+    const s:State={...initial('daily'),round:DAILY_ROUNDS,sequence:[2,8],phase:'input'};
     const done=expected(s).reduce((v,c)=>guess(v,c,777).state,s);
     expect(done.phase).toBe('won');expect(done.finishedAt).toBe(777);
   });
