@@ -191,7 +191,7 @@ export default function TerminalEscapePage({locale}:AppProps){
               </div>
               {game.history.map(entry=><div key={entry.id} className="mb-5">
                 <p className="break-all text-emerald-300"><span className="text-emerald-400/60">m32@lab</span><span className="text-zinc-500">:{game.cwd==='/'?'~':'cache'}$</span> <span className="text-zinc-50">{entry.command}</span></p>
-                <div className="mt-1.5 space-y-1">{entry.lines.map((line,i)=><p key={i} dir={/[^\x00-\x7F]/.test(line[lang])&&fa?'rtl':'ltr'} className={`break-words text-start ${colors[line.tone]}`}>{line[lang]}</p>)}</div>
+                <div className="mt-1.5 space-y-1">{entry.lines.map((line,i)=><p key={i} dir={fa?'auto':'ltr'} className={`break-words text-start ${colors[line.tone]}`}>{line[lang]}</p>)}</div>
               </div>)}
               {complete && <p className="my-4 font-mono text-lg font-black tracking-widest text-emerald-300">[ SYSTEM UNLOCKED ✓ ]</p>}
               <div ref={terminalEnd}/>
