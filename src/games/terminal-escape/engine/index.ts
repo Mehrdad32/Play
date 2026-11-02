@@ -62,7 +62,7 @@ export function execute(game: GameState, raw: string, now = Date.now()): GameSta
     next.cwd = '/';
     say('✓ '+fa,'✓ '+en,'success');
     if (next.stage < 5) {
-      say('لایه بعدی: '+STAGES[next.stage].fa, 'Next layer: '+STAGES[next.stage].en,'accent');
+      say('لایه بعدی: '+STAGES[next.stage as 0|1|2|3|4].fa, 'Next layer: '+STAGES[next.stage as 0|1|2|3|4].en,'accent');
     }
   };
   if (command === 'clear') {
@@ -74,7 +74,7 @@ export function execute(game: GameState, raw: string, now = Date.now()): GameSta
     say('همه چیز یک بازی شبیه‌سازی‌شده است؛ هیچ دستور سیستم‌عاملی اجرا نمی‌شود.', 'This is a simulated game. No real operating-system commands are executed.','muted');
   } else if (command === 'hint') {
     next.hintsUsed += 1;
-    const hint = STAGES[next.stage].hint;
+    const hint = STAGES[next.stage as 0|1|2|3|4].hint;
     say('راهنما (جریمه امتیاز): '+hint.fa, 'Hint (score penalty): '+hint.en,'accent');
   } else if (command === 'map') {
     say('نقشه: '+STAGES.map((stage,index)=>index < next.stage?'[✓ '+stage.id+']':index===next.stage?'[> '+stage.id+']':'[· '+stage.id+']').join(' '),

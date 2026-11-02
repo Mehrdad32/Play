@@ -240,7 +240,7 @@ export default function TerminalEscapePage({locale}:AppProps){
               {complete?<CheckCircle2 size={21} className="text-emerald-300"/>:<span className="font-mono text-xs text-zinc-500">{num(game.stage+1,lang)}/۵</span>}
             </div>
             <h2 className="mt-4 text-xl font-bold text-white">{complete?t.finish:stage[lang]}</h2>
-            <p className="mt-3 text-sm leading-7 text-zinc-400">{complete?t.victoryText:t.instructions[game.stage]}</p>
+            <p className="mt-3 text-sm leading-7 text-zinc-400">{complete?t.victoryText:t.instructions[Math.min(game.stage,4)]}</p>
             <div className="mt-5 grid grid-cols-2 gap-2 border-t border-white/10 pt-5">
               <div><p className="text-xs text-zinc-500">{t.time}</p><p className="mt-1 font-mono text-xl font-black text-white" dir="ltr">{clock(seconds)}</p></div>
               <div><p className="text-xs text-zinc-500">{t.round}</p><p className="mt-1 font-mono text-xl font-black text-white" dir="ltr">{num(game.commands,lang)}</p></div>
