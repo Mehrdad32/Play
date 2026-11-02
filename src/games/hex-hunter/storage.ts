@@ -74,7 +74,7 @@ export function record(previous:State,next:State):Stats {
   const stats=loadStats();
   if(previous.phase!=='question'||next.phase==='question')return stats;
   const row=stats.byMode[next.mode];
-  row.bestRound=Math.max(row.bestRound,next.correctCount?next.round:Math.max(0,next.round-1));
+  row.bestRound=Math.max(row.bestRound,next.feedback?.correct?next.round:Math.max(0,next.round-1));
   row.bestScore=Math.max(row.bestScore,next.score);
   row.bestStreak=Math.max(row.bestStreak,next.bestStreak);
   if(next.feedback?.correct&&next.lives===3)row.perfect++;
