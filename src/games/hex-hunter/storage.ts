@@ -78,7 +78,7 @@ export function record(previous:State,next:State):Stats {
   row.bestScore=Math.max(row.bestScore,next.score);
   row.bestStreak=Math.max(row.bestStreak,next.bestStreak);
   if(next.feedback?.correct&&next.lives===3)row.perfect++;
-  if(previous.phase!=='won'&&next.phase==='won')row.wins++;
+  if(next.phase==='won')row.wins++;
   if(next.unlocked32)stats.earnedM32=true;
   if(next.mode==='daily'&&next.day&&(next.phase==='won'||next.phase==='lost'))
     stats.daily[next.day]=Math.max(stats.daily[next.day]??0,next.score);
