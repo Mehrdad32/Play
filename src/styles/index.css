@@ -34,3 +34,13 @@ button:disabled { cursor: not-allowed; }
 .tile.tile-moving.tile-merged { animation:tile-shift-pop .25s cubic-bezier(.19,.7,.24,1) both; }
 @keyframes tile-shift { from {transform:translate(var(--from-x),var(--from-y));} to {transform:translate(0,0);} }
 @keyframes tile-shift-pop { 0% {transform:translate(var(--from-x),var(--from-y)) scale(1)} 65% {transform:translate(0,0) scale(1.1)} 100% {transform:translate(0,0) scale(1)} }
+
+/* Terminal Escape — readable console surfaces and reduced-motion-aware UI. */
+.terminal-scroll { scrollbar-color: #245541 #080e0b; scrollbar-width: thin; }
+.terminal-scroll::-webkit-scrollbar { width: 7px; }
+.terminal-scroll::-webkit-scrollbar-thumb { background: #245541; border-radius: 999px; }
+.terminal-chrome { font-variant-ligatures: none; }
+.terminal-win { animation: terminal-win-in .5s cubic-bezier(.2,.7,.25,1) both; }
+@keyframes terminal-win-in { from {opacity:.5;transform:translateY(12px) scale(.985)} to {opacity:1;transform:translateY(0) scale(1)} }
+@media (prefers-reduced-motion:reduce) { .terminal-win {animation:none;} }
+.motion-off .terminal-win {animation:none;}
