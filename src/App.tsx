@@ -5,6 +5,7 @@ import { games, type GameInfo } from './games/catalog';
 import MergePage from './games/m32-merge/MergePage';
 import TerminalEscapePage from './games/terminal-escape/TerminalEscapePage';
 import MemoryBitsPage from './games/memory-bits/MemoryBitsPage';
+import HexHunterPage from './games/hex-hunter/HexHunterPage';
 import { loadSettings, saveSettings, type Settings } from './lib/storage';
 export type AppLocale = 'fa' | 'en';
 export type AppProps = { locale: AppLocale; settings: Settings; setSettings: (settings: Settings) => void };
@@ -119,6 +120,7 @@ export default function App() {
       <Route path="/games/m32-merge" element={<MergePage locale={settings.locale} settings={settings} setSettings={setSettings}/>}/>
       <Route path="/games/terminal-escape" element={<TerminalEscapePage locale={settings.locale} settings={settings} setSettings={setSettings}/>}/>
       <Route path="/games/memory-bits" element={<MemoryBitsPage locale={settings.locale} settings={settings} setSettings={setSettings}/>}/>
+      <Route path="/games/hex-hunter" element={<HexHunterPage locale={settings.locale} settings={settings} setSettings={setSettings}/>}/>
       <Route path="/about" element={<About locale={settings.locale}/>}/>
       <Route path="*" element={<div className="mx-auto max-w-3xl px-5 py-32 text-center"><h1 className="text-5xl font-black">404</h1><p className="my-8 text-zinc-400">{settings.locale==='fa'?'این صفحه پیدا نشد.':'Page not found.'}</p><Link to="/" className="text-emerald-300">{settings.locale==='fa'?'بازگشت به خانه':'Back home'}</Link></div>}/>
     </Routes></main>

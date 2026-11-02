@@ -37,11 +37,11 @@ See the **[live visual preview](https://play.mehrdad32.ir/)**. This is an illust
 | --- | --- |
 | **M32 Merge** — custom 2048 with a special 16+16→32 celebration | Playable |
 | Reaction 32 | Planned |
-| HEX Hunter | Planned |
+| **HEX Hunter** — color-decoding, odd-one-out, RGB mixing and daily | **Playable** |
 | **Memory Bits** — four-mode 4×4 memory challenge | **Playable** |
 | **Terminal Escape** — five-layer simulated terminal adventure | **Playable** |
 
-M32 Merge, Memory Bits and Terminal Escape are playable. Reaction 32 and HEX Hunter remain intentionally non-clickable until implemented.
+M32 Merge, HEX Hunter, Memory Bits and Terminal Escape are playable. Only Reaction 32 is planned and intentionally non-clickable.
 
 ## M32 Merge highlights
 
@@ -99,6 +99,19 @@ The pure `src/games/memory-bits/engine` contains deterministic seeded pattern ge
 - No online leaderboard, external services, tracking, credentials or registration; sharing uses Web Share API or clipboard fallback.
 - Versioned and validated storage keys: `m32.playground.v1.memoryBits.session.<mode>`, `m32.playground.v1.memoryBits.stats`.
 
+## HEX Hunter — the fourth playable game
+
+**Route:** `/games/hex-hunter`
+
+Bilingual, mobile-first arcade game with four distinct color challenges:
+
+- **HEX Decode:** see a 6-digit `#RRGGBB` code and select its actual swatch from four increasingly close options.
+- **Odd One Out:** find the subtly different color in 3×3, 4×4 and 5×5 boards.
+- **RGB Mix Lab:** use real 0–255 R/G/B sliders to approximate a target; difficulty adjusts allowed Euclidean RGB distance.
+- **Daily Hunt:** eight deterministic rotating puzzles shared for the same UTC date, with no API, backend, account or online leaderboard.
+
+Three lives per run; valid answers update the streak and score. Local records are isolated per mode, and the 32nd round unlocks the persistent M32 achievement. Results can be shared via the Web Share API or clipboard fallback. Sessions and stats are stored only in localStorage under `m32.playground.v1.hexHunter.*`, with validation on restore. Responsive interactions remain within the viewport without horizontal page scrolling. The engine is pure and deterministically testable without a DOM.
+
 ## Run locally
 
 Requires **Node.js 22.12+**.
@@ -119,7 +132,7 @@ npm run build
 npm run preview
 ```
 
-Routes: `/`, `/games/m32-merge`, `/games/terminal-escape`, `/games/memory-bits`, `/about`. The UI language toggle is persisted locally and keeps the current route.
+Routes: `/`, `/games/m32-merge`, `/games/terminal-escape`, `/games/memory-bits`, `/games/hex-hunter`, `/about`. The UI language toggle is persisted locally and keeps the current route.
 
 ## Architecture
 
